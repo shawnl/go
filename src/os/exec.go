@@ -10,6 +10,8 @@ import (
 	"syscall"
 )
 
+var pid, ppid int
+
 // Process stores the information about a process created by StartProcess.
 type Process struct {
 	Pid    int
@@ -63,8 +65,20 @@ type Signal interface {
 	Signal() // to distinguish from other Stringers
 }
 
-// Getpid returns the process id of the caller.
-func Getpid() int { return syscall.Getpid() }
+// Getpid returns the process id of the caller. Cached.
+func Getpid() int {
+	if pid == 0 {
+		pid = syscall.Getpid()
+	}
 
-// Getppid returns the process id of the caller's parent.
-func Getppid() int { return syscall.Getppid() }
+	return pid
+}
+
+// Getppid returns the process id of the caller's parent. Cached.
+func Getppid() int {
+	if ppid == 0 {
+		ppid = syscall.Getppid()
+	}
+
+	return ppid
+}
